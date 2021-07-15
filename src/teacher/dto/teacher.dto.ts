@@ -3,19 +3,13 @@ export class FindTeacherResponseDto {
     name: string
 }
 
-// export class TeacherResponseDto {
-//     id: number
-//     name: string
-//     teacher: string
-// }
+export class AssignStudentToTeacher {
+    teacherFirstName: string
+    studentFirstName: string
+}
 
 export class CreateTeacherDto {
     fisrtName: string
     lastName: string
 }
 
-
-// export class UpdateTeacherDto {
-//     name: string
-//     teacher: string
-// }

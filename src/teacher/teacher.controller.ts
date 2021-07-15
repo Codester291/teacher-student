@@ -1,5 +1,5 @@
 import { Controller, Get, Put, Param, Body, Post } from "@nestjs/common";
-import { CreateTeacherDto, FindTeacherResponseDto } from "./dto/teacher.dto";
+import { AssignStudentToTeacher, CreateTeacherDto, FindTeacherResponseDto } from "./dto/teacher.dto";
 import { TeacherService } from "./teacher.service";
 import { Teacher } from "./teacher.entity";
 
@@ -31,12 +31,11 @@ export class TeacherController {
         return this.teacherService.updateTeacher(id, payload)
     }
 
-    @Post("/:teacherFirstName/add/:studentName")
+    @Post("/assign")
     addStudent(
-        @Param('studentName') studentName: string, 
-        @Param('teacherFirstName') teacherFirstName: string
+        @Body() payload: AssignStudentToTeacher
     ) : Promise<Teacher> {
-        return this.teacherService.addStudentToTeacher(teacherFirstName, studentName)
+        return this.teacherService.addStudentToTeacher(payload)
     }
 
     @Get("/fetchTeacherStudent/:studentName")

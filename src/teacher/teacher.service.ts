@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { students } from 'src/db';
 import { Student } from 'src/student/student.entity';
 import { Repository } from 'typeorm';
-import { CreateTeacherDto } from './dto/teacher.dto';
+import { AssignStudentToTeacher, CreateTeacherDto } from './dto/teacher.dto';
 import { Teacher } from './teacher.entity';
 
 @Injectable()
@@ -18,12 +19,12 @@ export class TeacherService {
 
     async getTeachers(): Promise<Teacher[]> {
         return await this.teacherRepository.find({
-            relations: ['student']
+            relations: ['students']
         });
     }
 
     async getTeacherProfile(teacherId: string): Promise<Teacher> {
-        return await this.teacherRepository.findOne(teacherId, {relations: ['student']})
+        return await this.teacherRepository.findOne(teacherId, {relations: ['students']})
     }
 
     async createTeacher(payload: CreateTeacherDto): Promise<Teacher> {
@@ -36,17 +37,17 @@ export class TeacherService {
         return this.teacherRepository.save(teacherToBeUpdated)
     }
 
-    async addStudentToTeacher(teacherFirstName: string, studentName: string) : Promise<Teacher>{
-        const student = await this.studentRepository.findOne({where: {firstName: studentName}})
-        const teacher = await this.teacherRepository.findOne({where: {firstName: teacherFirstName}})
-        const teacherToBeUpdated = this.teacherRepository.create({...teacher, student: student})
-        await this.teacherRepository.save(teacherToBeUpdated)
-        return teacherToBeUpdated
+    async addStudentToTeacher(payload: AssignStudentToTeacher) : Promise<Teacher> {
+        const student = await this.studentRepository.findOne({where: {firstName: payload.studentFirstName}})
+        const teacher = await this.teacherRepository.findOne({where: {firstName: payload.teacherFirstName}, relations: ['students']})
+
+        teacher.students.push(student)
+        return await this.teacherRepository.save(teacher)
     }
 
     async fetchTeacherByStudent(studentName: string) : Promise<Teacher>{
         const student = await this.studentRepository.findOne({where: {firstName: studentName}})
-        const teacher = await this.teacherRepository.findOne({student: student}, {relations: ['student']})
+        const teacher = await this.teacherRepository.findOne({...student}, {relations: ['students']})
         return teacher
     }
 }

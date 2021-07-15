@@ -1,6 +1,7 @@
 import { type } from 'os';
+import { teachers } from 'src/db';
 import { Teacher } from 'src/teacher/teacher.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, JoinTable} from 'typeorm';
 
 @Entity()
 export class Student {
@@ -13,11 +14,17 @@ export class Student {
   @Column()
   lastName: string;
 
-  @OneToMany(type => Teacher, teacher => teacher.student )
-  teachers: Teacher[]
+  @CreateDateColumn()
+  createdDate: Date
 
-  // @ManyToMany(type => Teacher, teacher => teacher.students)
-  // @JoinColumn()
-  // teachers: Teacher[]
+  @UpdateDateColumn()
+  updatedDate: Date
+
+  // @ManyToOne(type => Teacher, teacher => teacher.students)
+  // teacher: Teacher
+
+  @ManyToMany(type => Teacher, teacher => teacher.students, {cascade: true})
+  @JoinTable()
+  teachers: Teacher[]
   
 }

@@ -1,6 +1,6 @@
 import { type } from 'os';
 import { Student } from 'src/student/student.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class Teacher {
@@ -20,10 +20,10 @@ export class Teacher {
     @UpdateDateColumn()
     updatedDate: Date
   
-    @ManyToOne(type => Student, student => student.teachers)
-    student: Student
-
-    // @ManyToMany(type => Student, student => student.teachers)
-    // @JoinColumn()
+    // @OneToMany(type => Student, student => student.teacher )
     // students: Student[]
+
+    @ManyToMany(type => Student, student => student.teachers)
+    @JoinColumn()
+    students: Student[]
 }
